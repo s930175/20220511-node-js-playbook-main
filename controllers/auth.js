@@ -1,6 +1,6 @@
 const getLogin = (req, res) => {
     res.status(200)
-        .render('login', {
+        .render('auth/login', {
             path: '/login',
             pageTitle: 'Login'
         });
