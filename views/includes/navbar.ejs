@@ -15,9 +15,11 @@
             <a class="nav-link <%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
           </li>
         </ul>
-        <form class="d-flex" action="/logout" method="POST">
-          <button class="btn btn-outline-success" type="submit">Logout</button>
-        </form>
+        <% if(isLogin ) { %>        
+          <form class="d-flex" action="/logout" method="POST">
+            <button class="btn btn-outline-success" type="submit">Logout</button>
+          </form>
+        <% } %>
       </div>
     </div>
   </nav>

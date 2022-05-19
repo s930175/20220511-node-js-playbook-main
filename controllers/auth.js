@@ -17,8 +17,9 @@ const getLogin = (req, res) => {
 //     }
 // };
 const postLogin = (req, res) => {
+    //解構賦值
     const { email, password } = req.body;
-    User.findOne({ where: { email }})
+    User.findOne({ where: { email:email }})
         .then((user) => {
             if (!user) {
                 console.log('login: 找不到此 user 或密碼錯誤');
@@ -26,9 +27,10 @@ const postLogin = (req, res) => {
             }
             if (user.password === password) {
                 console.log('login: 成功');
+                req.session.isLogin = true;
                 return res.redirect('/')
             } 
-            console.log('login: 找不到此 user 或密碼錯誤');
+            console.log('login: 密碼錯誤');
             res.redirect('/login');
         })
         .catch((err) => {
