@@ -56,13 +56,13 @@ app.use(shopRoutes);
 app.use(errorRoutes);
 
 database
-     .sync()
+    .sync()
 //force: true讓每次重啟資料庫時不會重新輸入products
 //但每次重開node app.js都是重塞新資料
     //.sync({ force: true })
 	.then((result) => {
-        // User.create({ displayName: 'Admin', email: 'admin@skoob.com', password: '11111111'});
-        Product.bulkCreate(products);
+        //User.create({ displayName: 'Admin', email: 'admin@skoob.com', password: '11111111'});
+        //Product.bulkCreate(products);
 		app.listen(port, () => {
 			console.log(`Web Server is running on port ${port}`);
 		});

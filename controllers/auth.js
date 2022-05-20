@@ -36,31 +36,32 @@ const postLogin = (req, res) => {
                 req.flash('errorMessage', '錯誤的 Email 或 Password。');
                 return res.redirect('/login');
             }
-            if (user.password === password) {
-                console.log('login: 成功');
-                //登入狀態儲存在session
-                req.session.isLogin = true;
-                return res.redirect('/')
-            } 
-            req.flash('errorMessage', '錯誤的 Email 或 Password。');
-            res.redirect('/login');
-            // bcryptjs
-            //     .compare(password, user.password)
-            //     .then((isMatch) => {
-            //         if (isMatch) {
-            //             req.session.user = user;
-            //             req.session.isLogin = true;
-            //             return req.session.save((err) => {
-            //                 console.log('postLogin - save session error: ', err);
-            //                 res.redirect('/');
-            //             });
-            //         }
-            //         res.redirect('/');
-            //     })
-            //     .catch((err) => {
-            //         req.flash('loginErrorMessage', '錯誤的 Email 或 Password。')
-            //         return res.redirect('/login');
-            //     })
+            // if (user.password === password) {
+            //     console.log('login: 成功');
+            //     //登入狀態儲存在session
+            //     req.session.isLogin = true;
+            //     return res.redirect('/')
+            // } 
+            // req.flash('errorMessage', '錯誤的 Email 或 Password。');
+            // res.redirect('/login');
+            bcryptjs
+            //比對輸入密碼(加密後)以及資料庫的密碼(加密後)
+                .compare(password, user.password)
+                .then((isMatch) => {
+                    if (isMatch) {
+                        req.session.user = user;
+                        req.session.isLogin = true;
+                        return req.session.save((err) => {
+                            console.log('postLogin - save session error: ', err);
+                            res.redirect('/');
+                        });
+                    }
+                    res.redirect('/signup');
+                })
+                .catch((err) => {
+                    req.flash('loginErrorMessage', '錯誤的 Email 或 Password。')
+                    return res.redirect('/login');
+                })
         })
         .catch((err) => {
             console.log('login error:', err);
