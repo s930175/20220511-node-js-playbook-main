@@ -19,6 +19,7 @@ const User = require('./models/user')
 ////////////////////////////////////////////////////////////////
 
 const app = express();
+const port = 3000;
 
 // middleware
 app.set('view engine', 'ejs');
@@ -60,8 +61,8 @@ database
 	.then((result) => {
         User.create({ displayName: 'Admin', email: 'admin@skoob.com', password: '11111111'});
         Product.bulkCreate(products);
-		app.listen(3000, () => {
-			console.log('Web Server is running on port 3000');
+		app.listen(port, () => {
+			console.log(`Web Server is running on port ${port}`);
 		});
 	})
 	.catch((err) => {

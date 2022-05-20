@@ -39,6 +39,7 @@ const postLogin = (req, res) => {
 };
 
 const postLogout = (req, res) => {
+    req.session.isLogin = false;
     // TODO: 實作 logout 機制
     res.redirect('/login')
 }
