@@ -6,9 +6,17 @@ const getLogin = (req, res) => {
         .render('auth/login', {
             path: '/login',
             pageTitle: 'Login',
-            errorMessage
+            errorMessage:errorMessage
         });
 };
+const getSignup = (req, res) => {
+    const errorMessage = req.flash('errorMessage')[0];
+    res.status(200)
+        .render('auth/signup', {
+            pageTitle: 'Signup',
+            errorMessage
+        });
+}
 
 // const postLogin = (req, res) => {
 //     const { email, password } = req.body;
@@ -52,10 +60,23 @@ const postLogout = (req, res) => {
         res.redirect('/login');
     });
 }
-const getSignup = (req, res) => {
-    res.status(200)
-        .render('auth/signup', {
-            pageTitle: 'Signup',
+
+const postSignup = (req, res) => {
+    const { displayName, email, password } = req.body;
+    User.findOne({ where: { email } })
+        .then((user) => {
+            if (user) {
+                req.flash('errorMessage', '此帳號已存在！請使用其他 Email。')
+                return res.redirect('/signup');
+            } else {
+                // TODO: 實作註冊功能
+            }
+        })
+        .then((result) => {
+            res.redirect('/login');
+        })
+        .catch((err) => {
+            console.log('signup_error', err);
         });
 }
 
@@ -65,5 +86,5 @@ module.exports = {
     getSignup,
     postLogin,
     postLogout,
-  
+    postSignup
 };
