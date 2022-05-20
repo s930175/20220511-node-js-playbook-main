@@ -69,7 +69,8 @@ const postSignup = (req, res) => {
                 req.flash('errorMessage', '此帳號已存在！請使用其他 Email。')
                 return res.redirect('/signup');
             } else {
-                // TODO: 實作註冊功能
+                //將輸入的資料作為參數傳入
+                return User.create({ displayName, email, password });
             }
         })
         .then((result) => {

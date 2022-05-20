@@ -8,14 +8,14 @@
       
           <div class="col-8 text-center">
             <h1>Signup</h1>
-				<% if (errorMessage ) { %>
+          </div>
+          <% if (errorMessage ) { %>
             <div class="col-8">
               <div class="alert alert-danger" role="alert">
                 <%= errorMessage %>
               </div>
             </div>
           <% } %>
-          </div>
           <div class="col-8">
             <form class="row g-3 was-validated justify-content-center" action="/signup" method="POST">
         
