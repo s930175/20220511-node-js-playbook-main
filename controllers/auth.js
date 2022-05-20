@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const bcryptjs = require('bcryptjs');//密碼加密
 
 const getLogin = (req, res) => {
     const errorMessage = req.flash('errorMessage')[0];
@@ -43,6 +44,23 @@ const postLogin = (req, res) => {
             } 
             req.flash('errorMessage', '錯誤的 Email 或 Password。');
             res.redirect('/login');
+            // bcryptjs
+            //     .compare(password, user.password)
+            //     .then((isMatch) => {
+            //         if (isMatch) {
+            //             req.session.user = user;
+            //             req.session.isLogin = true;
+            //             return req.session.save((err) => {
+            //                 console.log('postLogin - save session error: ', err);
+            //                 res.redirect('/');
+            //             });
+            //         }
+            //         res.redirect('/');
+            //     })
+            //     .catch((err) => {
+            //         req.flash('loginErrorMessage', '錯誤的 Email 或 Password。')
+            //         return res.redirect('/login');
+            //     })
         })
         .catch((err) => {
             console.log('login error:', err);
@@ -70,7 +88,14 @@ const postSignup = (req, res) => {
                 return res.redirect('/signup');
             } else {
                 //將輸入的資料作為參數傳入
-                return User.create({ displayName, email, password });
+                return bcryptjs.hash(password, 12)
+                .then((hashedPassword) => {
+                    //第一個參數是想要加密的數值，第二個參數是加密的強度
+                    return User.create({ displayName, email, password: hashedPassword });
+                })
+                .catch((err) => {
+                    console.log('create new user error: ', err);
+                })
             }
         })
         .then((result) => {
