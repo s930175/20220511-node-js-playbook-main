@@ -6,6 +6,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const connectFlash = require('connect-flash');
+// const csrfProtection = require('csurf');
 
 // 第三個區塊 自建模組
 const database = require('./utils/database');
@@ -37,11 +38,13 @@ app.use(session({
 })); 
 app.use(connectFlash());
 //bodyParser解析資料
+// app.use(csrfProtection());
 app.use(bodyParser.urlencoded({ extended: false }));
 //自定義的中介軟體進行儲存，每次執行的時候會經過這裡(app.js)都可執行到
 app.use((req, res, next) => {
 	res.locals.path = req.url;
     res.locals.isLogin = req.session.isLogin || false;
+    // res.locals.csrfToken = req.csrfToken();
     next();
 });
 
@@ -57,7 +60,7 @@ app.use(errorRoutes);
 
 database
     .sync()
-//force: true讓每次重啟資料庫時不會重新輸入products
+//force: true讓每次重啟資料庫時不會重新輸入products(強制重設db)
 //但每次重開node app.js都是重塞新資料
     //.sync({ force: true })
 	.then((result) => {
