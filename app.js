@@ -5,6 +5,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const connectFlash = require('connect-flash');
 
 // 第三個區塊 自建模組
 const database = require('./utils/database');
@@ -34,9 +35,10 @@ app.use(session({
 		maxAge: 10000 // session 狀態儲存多久？單位為毫秒
 	}
 })); 
+app.use(connectFlash());
 //bodyParser解析資料
 app.use(bodyParser.urlencoded({ extended: false }));
-
+//自定義的中介軟體進行儲存，每次執行的時候會經過這裡(app.js)都可執行到
 app.use((req, res, next) => {
 	res.locals.path = req.url;
     res.locals.isLogin = req.session.isLogin || false;

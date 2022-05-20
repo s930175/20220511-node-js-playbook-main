@@ -1,10 +1,12 @@
 const User = require('../models/user');
 
 const getLogin = (req, res) => {
+    const errorMessage = req.flash('errorMessage')[0];
     res.status(200)
         .render('auth/login', {
             path: '/login',
-            pageTitle: 'Login'
+            pageTitle: 'Login',
+            errorMessage
         });
 };
 
@@ -22,15 +24,16 @@ const postLogin = (req, res) => {
     User.findOne({ where: { email:email }})
         .then((user) => {
             if (!user) {
-                console.log('login: 找不到此 user 或密碼錯誤');
+                req.flash('errorMessage', '錯誤的 Email 或 Password。');
                 return res.redirect('/login');
             }
             if (user.password === password) {
                 console.log('login: 成功');
+                //登入狀態儲存在session
                 req.session.isLogin = true;
                 return res.redirect('/')
             } 
-            console.log('login: 密碼錯誤');
+            req.flash('errorMessage', '錯誤的 Email 或 Password。');
             res.redirect('/login');
         })
         .catch((err) => {
@@ -49,10 +52,18 @@ const postLogout = (req, res) => {
         res.redirect('/login');
     });
 }
+const getSignup = (req, res) => {
+    res.status(200)
+        .render('auth/signup', {
+            pageTitle: 'Signup',
+        });
+}
 
 module.exports = {
     //這些方法由routes定義
     getLogin,
+    getSignup,
     postLogin,
     postLogout,
+  
 };
