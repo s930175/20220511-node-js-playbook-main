@@ -51,7 +51,7 @@ const postCartAddItem = (req, res) => {
     let newQuantity = 1;
     //找到sql的user後
     req.user
-    //sql裡有Cart，就會有方法getCart(每個仁Cart只有一個)
+    //sql裡有Cart，就會有方法getCart(每個人Cart只有一個)
         .getCart()
         .then((cart) => {
             userCart = cart;

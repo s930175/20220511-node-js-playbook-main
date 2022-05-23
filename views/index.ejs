@@ -13,12 +13,16 @@
                             <div class="card-body">
                               <h5 class="card-title"><%= product.title %></h5>
                               <p class="card-text"><%= product.description %></p>
-                              <form action="/cart-add-item" method="POST">
-                                  <!-- name很重要，對應sql的product -->
-                                  <input type="hidden" name="productId" value="<%= product.id %>">
-                                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                  <button type="submit" class="btn btn-primary">加到購物車</button>
-                              </form>
+                              <div class="d-flex">
+                                <a class="btn btn-outline-info" href="product/<%= product.id %>">詳細資訊</a>
+                                <% if(isLogin) { %>                            
+                                  <form action="/cart-add-item" method="POST">
+                                      <input type="hidden" name="productId" value="<%= product.id %>">
+                                      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                                      <button class="btn btn-primary ms-3">加入購物車</button>
+                                  </form>
+                                <% } %>
+                            </div>
                             </div>
                           </div>
                     </div>
