@@ -9,6 +9,11 @@
           <li class="nav-item">
             <a class="nav-link <%= path === '/' ? 'active' : '' %>" aria-current="page" href="/">Home</a>
           </li>
+          <% if (isLogin) { %>
+            <li class="nav-item">
+              <a class="nav-link <%= path === '/cart' ? 'active' : '' %>" aria-current="page" href="/cart">Cart</a>
+            </li>
+          <% } %>
           <% if (!isLogin) { %>
             <li class="nav-item">
               <a class="nav-link <%= path === '/login' ? 'active' : '' %>" aria-current="page" href="/login">Login</a>

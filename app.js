@@ -43,8 +43,26 @@ app.use(connectFlash());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(csrfProtection());
 //自定義的中介軟體進行儲存，每次執行的時候會經過這裡(app.js)都可執行到
+// NOTE: 取得 User model (如果已登入的話)
 app.use((req, res, next) => {
-	res.locals.path = req.url;
+    if (!req.session.user) {
+        return next();
+    }
+    //findByPk:primaryKey
+    User.findByPk(req.session.user.id)
+        .then((user) => {
+            //require session存的user(後面的user是session的user)
+            req.user = user;
+            next();
+        })
+        .catch((err) => {
+            console.log('find user by session id error: ', err);
+        })
+});
+
+app.use((req, res, next) => {
+    res.locals.pageTitle = 'Book Your Books online';
+    res.locals.path = req.url;
     res.locals.isLogin = req.session.isLogin || false;
     res.locals.csrfToken = req.csrfToken();
     next();
@@ -55,17 +73,19 @@ app.use((req, res, next) => {
 //     next();
 // });
 
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
+
 //使用路由
 app.use(authRoutes);
 app.use(shopRoutes);
 app.use(errorRoutes);
 
-User.hasOne(Cart);
-Cart.belongsTo(User);
-Cart.belongsToMany(Product, { through: CartItem });
-Product.belongsToMany(Cart, { through: CartItem });
+
 database
-    .sync({ force: true })
+    .sync({ force: true})
 //force: true讓每次重啟資料庫時不會重新輸入products(強制重設db)
 //但每次重開node app.js都是重塞新資料
     // .sync({ force: true })
