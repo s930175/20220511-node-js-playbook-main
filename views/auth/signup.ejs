@@ -23,7 +23,7 @@
                   <!-- label 和 input都要有，for id對應可以有focus效果 -->
                 <label for="displayName" class="form-label">Display Name</label>
                 <!-- name="displayName" 很重要，是key值儲存在body裡 -->
-                <input type="text" class="form-control" id="displayName" placeholder="Display Name" name="displayName" maxlength="20" required>
+                <input type="text" class="form-control" id="displayName" placeholder="Display Name" name="displayName" maxlength="20" value="Admin" required>
                 <div class="invalid-feedback">
                     顯示名稱最長不得超過 20 字元。
                 </div>
@@ -31,7 +31,7 @@
         <!-- 可以在表單裡加上value，做成預設值，在開發階段就不用一值重複輸入 -->
               <div>
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" placeholder="example@com" name="email" required>
+                <input type="email" class="form-control" id="email" placeholder="example@com" name="email" value="admin@skoob.com" required>
                 <div class="invalid-feedback">
                   請輸入合法的電子郵件地址。
                 </div>
@@ -39,12 +39,12 @@
         
               <div>
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" placeholder="password" name="password" minlength="8"  maxlength="12" required>
+                <input type="password" class="form-control" id="password" placeholder="password" name="password" minlength="8"  maxlength="12" value="11111111" required>
                 <div class="invalid-feedback">
                     請輸入 8 ~ 12 位數的密碼。
                 </div>
               </div>
-              
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <button class="btn btn-primary" type="submit">Signup</button>
         
               </form>

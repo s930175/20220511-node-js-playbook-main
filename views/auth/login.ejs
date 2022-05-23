@@ -18,16 +18,16 @@
                 <form class="row g-3 needs-validation" action="/login" method="POST">
                     <div>
                       <label for="email" class="form-label">Email</label>
-                      <input type="email" class="form-control" id="email" name="email">
+                      <input type="email" class="form-control" id="email" name="email" value="admin@skoob.com">
                     </div>
 
                     <div>
                       <label for="password" class="form-label">Password</label>
-                      <input type="password" class="form-control" id="password" name="password">
+                      <input type="password" class="form-control" id="password" name="password" value="11111111">
                     </div>
 
                     <div>
-                        <!-- <input type="hidden" name="_csrf" value="<%= csrfToken %>"> -->
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                       <button class="btn btn-primary" type="submit">Login</button>
                     </div>
                   </form>

@@ -6,7 +6,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const connectFlash = require('connect-flash');
-// const csrfProtection = require('csurf');
+const csrfProtection = require('csurf');
 
 // 第三個區塊 自建模組
 const database = require('./utils/database');
@@ -16,7 +16,9 @@ const shopRoutes = require('./routes/shop');
 const errorRoutes = require('./routes/404');
 const Product = require('./models/product');
 //const req = require('express/lib/request');
-const User = require('./models/user')
+const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
 
 ////////////////////////////////////////////////////////////////
 
@@ -33,18 +35,18 @@ app.use(session({
 	resave: false,   // 沒變更內容是否強制回存
 	saveUninitialized: false ,  // 新 session 未變更內容是否儲存
 	cookie: {
-		maxAge: 10000 // session 狀態儲存多久？單位為毫秒
+		maxAge: 1000000  // session 狀態儲存多久？單位為毫秒
 	}
 })); 
 app.use(connectFlash());
 //bodyParser解析資料
-// app.use(csrfProtection());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(csrfProtection());
 //自定義的中介軟體進行儲存，每次執行的時候會經過這裡(app.js)都可執行到
 app.use((req, res, next) => {
 	res.locals.path = req.url;
     res.locals.isLogin = req.session.isLogin || false;
-    // res.locals.csrfToken = req.csrfToken();
+    res.locals.csrfToken = req.csrfToken();
     next();
 });
 
@@ -58,11 +60,15 @@ app.use(authRoutes);
 app.use(shopRoutes);
 app.use(errorRoutes);
 
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
 database
-    .sync()
+    .sync({ force: true })
 //force: true讓每次重啟資料庫時不會重新輸入products(強制重設db)
 //但每次重開node app.js都是重塞新資料
-    //.sync({ force: true })
+    // .sync({ force: true })
 	.then((result) => {
         //User.create({ displayName: 'Admin', email: 'admin@skoob.com', password: '11111111'});
         //Product.bulkCreate(products);

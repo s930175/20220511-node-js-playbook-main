@@ -37,7 +37,7 @@ const postLogin = (req, res) => {
                 return res.redirect('/login');
             }
             // if (user.password === password) {
-            //     console.log('login: 成功');
+            //     console.log('login: 成功');d
             //     //登入狀態儲存在session
             //     req.session.isLogin = true;
             //     return res.redirect('/')

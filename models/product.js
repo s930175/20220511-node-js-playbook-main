@@ -24,7 +24,7 @@ const Product = database.define('product', {
         allowNull: false,
       },
       description: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(1024),
         allowNull: false,
       },
 });
