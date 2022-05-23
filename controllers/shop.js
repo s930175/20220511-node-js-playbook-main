@@ -117,8 +117,11 @@ const postCartDeleteItem = (req, res, next) => {
         .then((products) => {
             //有找到的話就拿找到的第一筆(也是唯一一筆)
             const product = products[0];
+            //cartItem裡記錄productID和cartID(哪個user的cart)
+            //找到的products[0]是屬於哪個cartItem的
             return product.cartItem.destroy();
         })
+        //重新計算金額
         .then(() => {
             return userCart
                 .getProducts()
@@ -136,7 +139,8 @@ const postCartDeleteItem = (req, res, next) => {
         })
         .catch((err) => console.log(err));
 };
-//匯出函式
+//匯出函式(匯出後設定路由，再去模板(view)新增對應表單)
+//運作方式:當表單改變時，透過路由執行函式
 module.exports = {
     getIndex,
     getCart,
