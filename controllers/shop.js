@@ -20,7 +20,7 @@ const getIndex = (req, res) => {
 const getCart = (req, res) => {
     //抓app.js的req.user
     req.user
-    //抓user的cart
+    //抓user的cart(在app裡已經說有Cart這個東西)
         .getCart()
         .then((cart) => {
             //在抓cart的產品
@@ -40,9 +40,65 @@ const getCart = (req, res) => {
         })
 }
 
+const postCartAddItem = (req, res) => {
+    //req.body是透過form post傳回來的東西(form對應的key寫在name裡)
+    //req.body傳回來的再用productId去接
+    const { productId } = req.body;
+    //userCart可能是[]或有多個
+    let userCart;
+    let newQuantity = 1;
+    //找到sql的user後
+    req.user
+    //sql裡有Cart，就會有方法getCart(每個仁Cart只有一個)
+        .getCart()
+        .then((cart) => {
+            userCart = cart;
+            //在userCart裡抓product(product有多個，ID對應每個product)
+            //檢查userCart有沒有該產品
+            // id: productId 的productId是在form表單裡的name定義，再透過app.js的bodyParser解讀
+            return cart.getProducts({ where: { id: productId }});
+        })
+        .then((products) => {
+            let product;
+            if (products.length > 0) {
+                product = products[0];
+                //有的話就把數量+1
+                const oldQuantity = product.cartItem.quantity;
+                newQuantity = oldQuantity + 1;
+                return product;
+            }
+            //沒有的話就新增
+            //productId是每個product的key
+            return Product.findByPk(productId);
+        })
+        .then((product) => {
+            //最後回傳新的數量
+            return userCart.addProduct(product, {
+                through: { quantity: newQuantity }
+            });
+        })
+        .then(() => {
+            return userCart.getProducts();
+        })
+        .then((products) => {
+            const productsSums = products.map((product) => product.price * product.cartItem.quantity);
+            const amount = productsSums.reduce((accumulator, currentValue) => accumulator + currentValue);
+            userCart.amount = amount;
+            return userCart.save();
+        })
+        .then(() => {
+            res.redirect('/cart');
+        })
+        .catch((err) => {
+            console.log('postCartAddItem error: ', err);
+        })
+};
+
 module.exports = {
     getIndex,
+    getProduct,
     getCart,
+    postCartAddItem,
 }
 
 // const getIndex = (req, res) => {
