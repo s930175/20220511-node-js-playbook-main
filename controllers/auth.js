@@ -7,7 +7,7 @@ const getLogin = (req, res) => {
         .render('auth/login', {
             path: '/login',
             pageTitle: 'Login',
-            errorMessage:errorMessage
+            errorMessage: errorMessage
         });
 };
 const getSignup = (req, res) => {
@@ -30,7 +30,7 @@ const getSignup = (req, res) => {
 const postLogin = (req, res) => {
     //解構賦值
     const { email, password } = req.body;
-    User.findOne({ where: { email:email }})
+    User.findOne({ where: { email: email } })
         .then((user) => {
             if (!user) {
                 req.flash('errorMessage', '錯誤的 Email 或 Password。');
@@ -45,7 +45,7 @@ const postLogin = (req, res) => {
             // req.flash('errorMessage', '錯誤的 Email 或 Password。');
             // res.redirect('/login');
             bcryptjs
-            //比對輸入密碼(加密後)以及資料庫的密碼(加密後)
+                //比對輸入密碼(加密後)以及資料庫的密碼(加密後)
                 .compare(password, user.password)
                 .then((isMatch) => {
                     if (isMatch) {
@@ -90,14 +90,19 @@ const postSignup = (req, res) => {
             } else {
                 //將輸入的資料作為參數傳入
                 return bcryptjs.hash(password, 12)
-                .then((hashedPassword) => {
-                    //第一個參數是想要加密的數值，第二個參數是加密的強度
-                    return User.create({ displayName, email, password: hashedPassword });
-                })
-                .catch((err) => {
-                    console.log('create new user error: ', err);
-                })
-            }
+                    .then((hashedPassword) => {
+                        //第一個參數是想要加密的數值，第二個參數是加密的強度
+                        //再新增user的時候建立一個他專屬的cart
+                        return User
+                            .create({ displayName, email, password: hashedPassword })
+                            .then((newUser) => {
+                                return newUser.createCart();
+                            })
+                            .catch((err) => {
+                                console.log('create new user error: ', err);
+                            })
+                    })
+                }
         })
         .then((result) => {
             res.redirect('/login');

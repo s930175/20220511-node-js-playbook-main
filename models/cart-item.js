@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 const database = require('../utils/database');
 
 ////////////////////////////////////////////////////////////
-
+//建立一個user專屬的cart
 const CartItem = database.define('cartItem', {
   id: {
     type: Sequelize.INTEGER,
