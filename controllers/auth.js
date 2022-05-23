@@ -50,6 +50,7 @@ const postLogin = (req, res) => {
                 .then((isMatch) => {
                     if (isMatch) {
                         //儲存user資料到session
+                        //session對應到資料庫
                         req.session.user = user;
                         req.session.isLogin = true;
                         return req.session.save((err) => {

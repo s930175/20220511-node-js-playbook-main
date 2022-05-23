@@ -52,6 +52,7 @@ app.use((req, res, next) => {
     User.findByPk(req.session.user.id)
         .then((user) => {
             //require session存的user(後面的user是session的user)
+            //require後再去controller shop裡
             req.user = user;
             next();
         })

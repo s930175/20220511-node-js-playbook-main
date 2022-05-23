@@ -18,12 +18,16 @@ const getIndex = (req, res) => {
         })
 };
 const getCart = (req, res) => {
+    //抓app.js的req.user
     req.user
+    //抓user的cart
         .getCart()
         .then((cart) => {
+            //在抓cart的產品
             return cart.getProducts()
                 .then((products) => {
                     res.render('shop/cart', {
+                        //會是[](空)或是有東西
                         products
                     });
                 })
