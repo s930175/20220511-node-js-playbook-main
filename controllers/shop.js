@@ -26,9 +26,11 @@ const getCart = (req, res) => {
             //在抓cart的產品
             return cart.getProducts()
                 .then((products) => {
+                    //在render的時候傳入參數
                     res.render('shop/cart', {
                         //會是[](空)或是有東西
-                        products
+                        products,
+                        amount:cart.amount
                     });
                 })
                 .catch((err) => {
@@ -77,13 +79,21 @@ const postCartAddItem = (req, res) => {
                 through: { quantity: newQuantity }
             });
         })
+        //下面這段在處理總額
         .then(() => {
+            //先拿購物車裡所有產品
             return userCart.getProducts();
         })
         .then((products) => {
+            //蒐集各個產品的數量*金額
+            //map格式轉換
             const productsSums = products.map((product) => product.price * product.cartItem.quantity);
+            //把上面得出的金額進行加總
+            //reduce把陣列資料處理成結果
             const amount = productsSums.reduce((accumulator, currentValue) => accumulator + currentValue);
+           //把上面的amount(後)放進該user的Cart定義的amount(前)
             userCart.amount = amount;
+            //存入db
             return userCart.save();
         })
         .then(() => {
@@ -93,12 +103,45 @@ const postCartAddItem = (req, res) => {
             console.log('postCartAddItem error: ', err);
         })
 };
-
+//移除商品
+const postCartDeleteItem = (req, res, next) => {
+    const { productId } = req.body;
+    let userCart;
+    req.user
+        .getCart()
+        .then((cart) => {
+            userCart = cart;
+            //抓productID
+            return cart.getProducts({ where: { id: productId }});
+        })
+        .then((products) => {
+            //有找到的話就拿找到的第一筆(也是唯一一筆)
+            const product = products[0];
+            return product.cartItem.destroy();
+        })
+        .then(() => {
+            return userCart
+                .getProducts()
+                .then((products) => {
+                    if (products.length) {
+                        const productSums = products.map((product) => product.price * product.cartItem.quantity);
+                        const amount = productSums.reduce((accumulator, currentValue) => accumulator + currentValue);
+                        userCart.amount = amount;
+                        return userCart.save();
+                    }
+                });
+        })
+        .then(() => {
+            res.redirect('/cart');
+        })
+        .catch((err) => console.log(err));
+};
+//匯出函式
 module.exports = {
     getIndex,
-    getProduct,
     getCart,
     postCartAddItem,
+    postCartDeleteItem,
 }
 
 // const getIndex = (req, res) => {

@@ -77,7 +77,7 @@ app.use((req, res, next) => {
 User.hasOne(Cart);
 Cart.belongsTo(User);//cart對user是一對一
 Cart.belongsToMany(Product, { through: CartItem });//cart和product是多對多
-Product.belongsToMany(Cart, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });//CartItem用來記錄cart和product的關係
 
 //使用路由
 app.use(authRoutes);
